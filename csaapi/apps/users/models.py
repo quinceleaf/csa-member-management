@@ -44,6 +44,22 @@ class User(PermissionsMixin, AbstractBaseUser, common_models.AbstractBaseModel):
         return f"{self.username}"
 
 
+class UserAddress(common_models.AddressBaseModel):
+    """Address of User for delivery (if not signed up for Location delivery)"""
+
+    is_active = models.BooleanField(default=True)
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="addresses")
+
+    def __str__(self):
+        return f"{self.location.name}"
+
+    class Meta:
+        ordering = [
+            "user",
+        ]
+
+
 class Settings(common_models.AbstractBaseModel):
     """Settings for individual User"""
 

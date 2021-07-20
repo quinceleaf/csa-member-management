@@ -24,7 +24,6 @@ load_dotenv()
 DEBUG = os.getenv("DEBUG", 0)  # == 1
 SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 ENVIRONMENT = os.getenv("ENVIRONMENT", "production")
-SIGNING_KEY = os.getenv("SIGNING_KEY", get_random_secret_key())
 
 
 # –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
@@ -260,16 +259,20 @@ REST_FRAMEWORK = {
 # Simple JWT
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": dt.timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": dt.timedelta(minutes=120),
+    "ACCESS_TOKEN_LIFETIME": dt.timedelta(
+        minutes=int(os.getenv("ACCESS_TOKEN_LIFETIME", 5))
+    ),
+    "REFRESH_TOKEN_LIFETIME": dt.timedelta(
+        minutes=int(os.getenv("REFRESH_TOKEN_LIFETIME", 10))
+    ),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
-    "ALGORITHM": "HS512",
-    "SIGNING_KEY": SIGNING_KEY,
+    "ALGORITHM": os.getenv("ALGORITHM", get_random_secret_key()),
+    "SIGNING_KEY": os.getenv("SIGNING_KEY", get_random_secret_key()),
     "VERIFYING_KEY": None,
-    "AUDIENCE": "api.csa_demo",
-    "ISSUER": "api.csa_demo",
+    "AUDIENCE": os.getenv("AUDIENCE", "api.localhost"),
+    "ISSUER": os.getenv("ISSUER", "api.localhost"),
     "AUTH_HEADER_TYPES": ("Bearer",),
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
     "USER_ID_FIELD": "id",
@@ -279,3 +282,14 @@ SIMPLE_JWT = {
     "TOKEN_TYPE_CLAIM": "token_type",
     "JTI_CLAIM": "jti",
 }
+
+# DJ-Stripe
+
+# STRIPE_LIVE_SECRET_KEY = os.environ.get("STRIPE_LIVE_SECRET_KEY", None)
+# STRIPE_TEST_SECRET_KEY = os.environ.get("STRIPE_TEST_SECRET_KEY", None)
+# STRIPE_LIVE_MODE = os.environ.get(
+#     "STRIPE_LIVE_MODE", False
+# )  # Must be True in production
+# DJSTRIPE_WEBHOOK_SECRET = os.environ.get("DJSTRIPE_WEBHOOK_SECRET", None)
+# DJSTRIPE_USE_NATIVE_JSONFIELD = True
+# DJSTRIPE_FOREIGN_KEY_TO_FIELD = "id"
